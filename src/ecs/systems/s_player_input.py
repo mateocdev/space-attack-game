@@ -18,3 +18,7 @@ def system_input(world: esper.World, event: pygame.event.Event,
                 and event.key == c_input.key_event:
             c_input.phase = InputCommandPhase.UP
             do_action(c_input)
+        if event.type == pygame.MOUSEBUTTONDOWN \
+                and event.button == c_input.key_event:
+            c_input.vector.xy = pygame.mouse.get_pos()
+            do_action(c_input)

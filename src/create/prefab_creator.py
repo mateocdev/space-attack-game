@@ -7,6 +7,7 @@ from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 
@@ -62,6 +63,7 @@ def create_input_player(world: esper.World):
     input_left = world.create_entity()
     input_right = world.create_entity()
     input_up = world.create_entity()
+    input_fire = world.create_entity()
     input_down = world.create_entity()
 
     world.add_component(input_left,
@@ -72,3 +74,22 @@ def create_input_player(world: esper.World):
                         CInputCommand("PLAYER_UP", pygame.K_UP))
     world.add_component(input_down,
                         CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
+    """Adding support for mouse input and spacebar fire"""
+    world.add_component(input_fire, CInputCommand(
+        "PLAYER_SHOOT", pygame.K_SPACE))
+    world.add_component(input_fire, CInputCommand(
+        "PLAYER_SHOOT", pygame.BUTTON_LEFT))
+
+
+def create_bullets(world: esper.World, player_size: pygame.Vector2, player_pos: pygame.Vector2, mouse_pos: pygame.Vector2, bullet_desc: dict):
+    size = pygame.Vector2(bullet_desc["size"]["x"],
+                          bullet_desc["size"]["y"])
+    color = pygame.Color(bullet_desc["color"]["r"],
+                         bullet_desc["color"]["g"],
+                         bullet_desc["color"]["b"])
+    pos = pygame.Vector2(player_pos.x + (player_size[0] / 2),
+                         player_pos.y + (player_size[1] / 2))
+    vel = mouse_pos - player_pos
+    vel.scale_to_length(bullet_desc["velocity"])
+    bullets_entity = create_square(world, size, pos, vel, color)
+    world.add_component(bullets_entity, CTagBullet())

@@ -1,6 +1,9 @@
 import json
 import pygame
 import esper
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.systems.s_bullets import system_bullets
+from src.ecs.systems.s_collision_bullets import system_collision_bullets
 
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
 
@@ -17,7 +20,7 @@ from src.ecs.components.c_surface import CSurface
 
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
-from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square
+from src.create.prefab_creator import create_bullets, create_enemy_spawner, create_input_player, create_player_square
 
 
 class GameEngine:
@@ -48,6 +51,8 @@ class GameEngine:
             self.level_01_cfg = json.load(level_01_file)
         with open("assets/cfg/player.json") as player_file:
             self.player_cfg = json.load(player_file)
+        with open("assets/cfg/bullet.json") as bullets_file:
+            self.bullets_cfg = json.load(bullets_file)
 
     def run(self) -> None:
         self._create()
@@ -88,9 +93,12 @@ class GameEngine:
 
         system_screen_bounce(self.ecs_world, self.screen)
         system_screen_player(self.ecs_world, self.screen)
+        system_bullets(self.ecs_world, self.screen)
+        system_collision_bullets(self.ecs_world)
         system_collision_player_enemy(
             self.ecs_world, self._player_entity, self.level_01_cfg)
         self.ecs_world._clear_dead_entities()
+        self.num_bullets = len(self.ecs_world.get_components(CTagBullet))
 
     def _draw(self):
         self.screen.fill(self.bg_color)
@@ -122,3 +130,6 @@ class GameEngine:
                 self._player_c_v.vel.y += self.player_cfg["input_velocity"]
             elif c_input.phase == CommandPhase.END:
                 self._player_c_v.vel.y -= self.player_cfg["input_velocity"]
+        if c_input.name == "PLAYER_SHOOT" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
+            create_bullets(self.ecs_world, self._player_c_s.surf.get_size(
+            ), self._player_c_t.pos, c_input.mouse_pos, self.bullets_cfg)
