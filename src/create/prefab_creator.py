@@ -89,14 +89,10 @@ def create_input_player(world: esper.World):
 
 
 def create_bullets(world: esper.World, player_size: pygame.Vector2, player_pos: pygame.Vector2, mouse_pos: pygame.Vector2, bullet_desc: dict):
-    size = pygame.Vector2(bullet_desc["size"]["x"],
-                          bullet_desc["size"]["y"])
-    color = pygame.Color(bullet_desc["color"]["r"],
-                         bullet_desc["color"]["g"],
-                         bullet_desc["color"]["b"])
+    bullet_surface = pygame.image.load(bullet_desc["image"]).convert_alpha()
     pos = pygame.Vector2(player_pos.x + (player_size[0] / 2),
                          player_pos.y + (player_size[1] / 2))
     vel = mouse_pos - player_pos
     vel.scale_to_length(bullet_desc["velocity"])
-    bullets_entity = create_square(world, size, pos, vel, color)
+    bullets_entity = create_sprite(world, pos, vel, bullet_surface)
     world.add_component(bullets_entity, CTagBullet())
