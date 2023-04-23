@@ -47,15 +47,12 @@ def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dic
 
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
-    size = pygame.Vector2(player_info["size"]["x"],
-                          player_info["size"]["y"])
-    color = pygame.Color(player_info["color"]["r"],
-                         player_info["color"]["g"],
-                         player_info["color"]["b"])
-    pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size.x / 2),
-                         player_lvl_info["position"]["y"] - (size.y / 2))
+    player_sprite = pygame.image.load(player_info["image"]).convert_alpha()
+    size = player_sprite.get_size()
+    pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size[0] / 2),
+                         player_lvl_info["position"]["y"] - (size[1] / 2))
     vel = pygame.Vector2(0, 0)
-    player_entity = create_square(world, size, pos, vel, color)
+    player_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(player_entity, CTagPlayer())
     return player_entity
 
