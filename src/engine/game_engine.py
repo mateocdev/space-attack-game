@@ -2,6 +2,7 @@ import json
 import pygame
 import esper
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullets import system_bullets
 from src.ecs.systems.s_collision_bullets import system_collision_bullets
 
@@ -97,6 +98,8 @@ class GameEngine:
         system_collision_bullets(self.ecs_world)
         system_collision_player_enemy(
             self.ecs_world, self._player_entity, self.level_01_cfg)
+
+        system_animation(self.ecs_world, self.delta_time)
         self.ecs_world._clear_dead_entities()
         self.num_bullets = len(self.ecs_world.get_components(CTagBullet))
 

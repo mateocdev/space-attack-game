@@ -10,6 +10,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.ecs.components.c_animation import CAnimation
 
 
 def create_square(world: esper.World, size: pygame.Vector2,
@@ -54,6 +55,7 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
     vel = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(player_entity, CTagPlayer())
+    world.add_component(player_entity, CAnimation(player_info["animations"]))
     return player_entity
 
 
