@@ -50,6 +50,7 @@ def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dic
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
     player_sprite = pygame.image.load(player_info["image"]).convert_alpha()
     size = player_sprite.get_size()
+    size = (size[0] / player_info["animations"]["number_frames"], size[1])
     pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size[0] / 2),
                          player_lvl_info["position"]["y"] - (size[1] / 2))
     vel = pygame.Vector2(0, 0)
@@ -89,8 +90,10 @@ def create_input_player(world: esper.World):
 
 def create_bullets(world: esper.World, player_size: pygame.Vector2, player_pos: pygame.Vector2, mouse_pos: pygame.Vector2, bullet_desc: dict):
     bullet_surface = pygame.image.load(bullet_desc["image"]).convert_alpha()
-    pos = pygame.Vector2(player_pos.x + (player_size[0] / 2),
-                         player_pos.y + (player_size[1] / 2))
+    bullet_size = bullet_surface.get_rect().size
+    pos = pygame.Vector2(player_pos.x + (player_size[0] / 2) - (bullet_size[0] / 2),
+                         player_pos.y +
+                         (player_size[1] / 2) - (bullet_size[1] / 2))
     vel = mouse_pos - player_pos
     vel.scale_to_length(bullet_desc["velocity"])
     bullets_entity = create_sprite(world, pos, vel, bullet_surface)

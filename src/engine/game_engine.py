@@ -134,5 +134,5 @@ class GameEngine:
             elif c_input.phase == CommandPhase.END:
                 self._player_c_v.vel.y -= self.player_cfg["input_velocity"]
         if c_input.name == "PLAYER_SHOOT" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
-            create_bullets(self.ecs_world, self._player_c_s.surf.get_size(
-            ), self._player_c_t.pos, c_input.mouse_pos, self.bullets_cfg)
+            create_bullets(self.ecs_world, self._player_c_s.area.size,
+                           self._player_c_t.pos, c_input.mouse_pos, self.bullets_cfg)
