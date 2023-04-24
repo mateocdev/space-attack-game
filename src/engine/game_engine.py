@@ -9,6 +9,8 @@ from src.ecs.systems.s_collision_bullets import system_collision_bullets
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
 
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
+from src.ecs.systems.s_enemy_state import system_enemy_state
+from src.ecs.systems.s_explosion import system_explosion
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_state import system_player_state
@@ -53,8 +55,10 @@ class GameEngine:
             self.level_01_cfg = json.load(level_01_file)
         with open("assets/cfg/player.json") as player_file:
             self.player_cfg = json.load(player_file)
-        with open("assets/cfg/bullet.json") as bullets_file:
-            self.bullets_cfg = json.load(bullets_file)
+        with open("assets/cfg/bullet.json") as bullet_file:
+            self.bullet_cfg = json.load(bullet_file)
+        with open("assets/cfg/explosion.json") as explosion_file:
+            self.explosion_cfg = json.load(explosion_file)
 
     def run(self) -> None:
         self._create()
@@ -90,9 +94,9 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):
+        print(self.enemies_cfg)
         system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
-        system_player_state(self.ecs_world)
 
         system_screen_bounce(self.ecs_world, self.screen)
         system_screen_player(self.ecs_world, self.screen)
@@ -100,6 +104,11 @@ class GameEngine:
         system_collision_bullets(self.ecs_world)
         system_collision_player_enemy(
             self.ecs_world, self._player_entity, self.level_01_cfg)
+
+        system_explosion(self.ecs_world, self.delta_time)
+        system_player_state(self.ecs_world)
+        system_enemy_state(self.ecs_world, self._player_entity,
+                           self.enemies_cfg["TypeHunter"])
 
         system_animation(self.ecs_world, self.delta_time)
         self.ecs_world._clear_dead_entities()
