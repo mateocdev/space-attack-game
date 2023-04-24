@@ -35,7 +35,7 @@ def _do_enemy_hunting(c_st: CEnemyState, c_a: CAnimation, c_t: CTransform, c_v: 
 
     c_v.vel = (pl_t.pos - c_t.pos).normalize() * enemy_state["velocity_chase"]
     distance = c_st.start_pos.distance_to(c_t.pos)
-    if distance >= enemy_state["distance_stop_return"]:
+    if distance >= enemy_state["distance_start_return"]:
         c_st.state = EnemyState.EXPLODING
 
 

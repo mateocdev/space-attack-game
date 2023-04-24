@@ -56,7 +56,7 @@ class GameEngine:
         with open("assets/cfg/player.json") as player_file:
             self.player_cfg = json.load(player_file)
         with open("assets/cfg/bullet.json") as bullet_file:
-            self.bullet_cfg = json.load(bullet_file)
+            self.bullets_cfg = json.load(bullet_file)
         with open("assets/cfg/explosion.json") as explosion_file:
             self.explosion_cfg = json.load(explosion_file)
 
@@ -101,14 +101,14 @@ class GameEngine:
         system_screen_bounce(self.ecs_world, self.screen)
         system_screen_player(self.ecs_world, self.screen)
         system_bullets(self.ecs_world, self.screen)
-        system_collision_bullets(self.ecs_world)
+        system_collision_bullets(self.ecs_world, self.explosion_cfg)
         system_collision_player_enemy(
-            self.ecs_world, self._player_entity, self.level_01_cfg)
+            self.ecs_world, self._player_entity, self.level_01_cfg, self.explosion_cfg)
 
-        system_explosion(self.ecs_world, self.delta_time)
+        system_explosion(self.ecs_world)
         system_player_state(self.ecs_world)
         system_enemy_state(self.ecs_world, self._player_entity,
-                           self.enemies_cfg["TypeHunter"])
+                           self.enemies_cfg["Hunter"])
 
         system_animation(self.ecs_world, self.delta_time)
         self.ecs_world._clear_dead_entities()
