@@ -1,10 +1,8 @@
-
-
 from enum import Enum
 
 
 class CPlayerState:
-    def __init__(self) -> None:
+    def __init__(self):
         self.state = PlayerState.IDLE
 
 

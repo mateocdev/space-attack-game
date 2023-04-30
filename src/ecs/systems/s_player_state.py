@@ -1,33 +1,26 @@
 import esper
+
+from src.ecs.components.c_animation import CAnimation, set_animation
 from src.ecs.components.c_player_state import CPlayerState, PlayerState
 from src.ecs.components.c_velocity import CVelocity
-from src.ecs.components.c_animation import CAnimation
 
 
 def system_player_state(world: esper.World):
-    components = world.get_components(CVelocity, CAnimation, CPlayerState)
-    for _, (c_v, c_a, c_pst) in components:
-        if c_pst.state == PlayerState.IDLE:
-            _do_idle_state(c_v, c_a, c_pst)
-        elif c_pst.state == PlayerState.MOVE:
-            _do_move_state(c_v, c_a, c_pst)
+    components = world.get_components(CPlayerState, CAnimation, CVelocity)
+    for _, (c_st, c_a, c_v) in components:
+        if c_st.state == PlayerState.IDLE:
+            _do_player_idle(c_st, c_a, c_v)
+        elif c_st.state == PlayerState.MOVE:
+            _do_player_move(c_st, c_a, c_v)
 
 
-def _do_idle_state(c_v: CVelocity, c_a: CAnimation, c_pst: CPlayerState):
-    _set_animation(c_a, 1)
+def _do_player_idle(c_st: CPlayerState, c_a: CAnimation, c_v: CVelocity):
+    set_animation(c_a, "IDLE")
     if c_v.vel.magnitude_squared() > 0:
-        c_pst.state = PlayerState.MOVE
+        c_st.state = PlayerState.MOVE
 
 
-def _do_move_state(c_v: CVelocity, c_a: CAnimation, c_pst: CPlayerState):
-    _set_animation(c_a, 0)
+def _do_player_move(c_st: CPlayerState, c_a: CAnimation, c_v: CVelocity):
+    set_animation(c_a, "MOVE")
     if c_v.vel.magnitude_squared() <= 0:
-        c_pst.state = PlayerState.IDLE
-
-
-def _set_animation(c_a: CAnimation, num_anim: int):
-    if c_a.curr_anim == num_anim:
-        return
-    c_a.curr_anim = num_anim
-    c_a.curr_anim_time = 0
-    c_a.curr_frame = c_a.curr_frame = c_a.animations_list[c_a.curr_anim].start
+        c_st.state = PlayerState.IDLE

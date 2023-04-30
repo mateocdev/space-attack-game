@@ -1,15 +1,15 @@
-
 from enum import Enum
 import pygame
 
 
-class CEnemyState:
+class CEnemyHunterState:
     def __init__(self, start_pos: pygame.Vector2):
-        self.state = EnemyState.IDLE
+        self.state = HunterState.IDLE
         self.start_pos = pygame.Vector2(start_pos.x, start_pos.y)
+        self.chase_sound_channel = None
 
 
-class EnemyState(Enum):
+class HunterState(Enum):
     IDLE = 0
-    HUNTING = 1
-    EXPLODING = 2
+    CHASE = 1
+    RETURN = 2
