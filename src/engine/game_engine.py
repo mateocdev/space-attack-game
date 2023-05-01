@@ -2,6 +2,8 @@ import asyncio
 import json
 import pygame
 import esper
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_animation import system_animation
 
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
@@ -43,12 +45,10 @@ class GameEngine:
         self.is_running = False
         self.framerate = self.window_cfg["framerate"]
         self.delta_time = 0
-        self.bg_color = pygame.Color(self.window_cfg["bg_color"]["r"],
-                                     self.window_cfg["bg_color"]["g"],
-                                     self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
 
         self.num_bullets = 0
+        self.background = pygame.image.load('assets/img/space.png')
 
     def _load_config_files(self):
         with open("assets/cfg/window.json", encoding="utf-8") as window_file:
@@ -122,7 +122,20 @@ class GameEngine:
         self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
 
     def _draw(self):
-        self.screen.fill(self.bg_color)
+        self.screen.blit(self.background, (0, 0))
+        self.font = pygame.font.SysFont('Arial', 20)
+        self.text = self.font.render(
+            f"Bullets: {self.num_bullets}", True, (255, 255, 255))
+        self.screen.blit(self.text, (10, 10))
+        self.titles = self.font.render(
+            f"Enemies: {len(self.ecs_world.get_component(CTagEnemy))}", True, (255, 255, 255))
+        self.screen.blit(self.titles, (10, 30))
+        self.play = self.font.render(
+            f"Player: {len(self.ecs_world.get_component(CTagPlayer))}", True, (255, 255, 255))
+        self.how_to_play = self.font.render(
+            f"Use the a, w, d, s to play", True, (255, 255, 255))
+        self.screen.blit(self.how_to_play, (10, 70))
+        self.screen.blit(self.play, (10, 50))
         system_rendering(self.ecs_world, self.screen)
         pygame.display.flip()
 
