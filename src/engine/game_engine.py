@@ -43,6 +43,7 @@ class GameEngine:
 
         self.clock = pygame.time.Clock()
         self.is_running = False
+        self.is_paused = False
         self.framerate = self.window_cfg["framerate"]
         self.delta_time = 0
         self.ecs_world = esper.World()
@@ -97,6 +98,11 @@ class GameEngine:
             system_input_player(self.ecs_world, event, self._do_action)
             if event.type == pygame.QUIT:
                 self.is_running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.is_running = False
+                if event.key == pygame.K_p:
+                    self.is_paused = True
 
     def _update(self):
         system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
@@ -136,6 +142,9 @@ class GameEngine:
             f"Use the a, w, d, s to play", True, (255, 255, 255))
         self.screen.blit(self.how_to_play, (10, 70))
         self.screen.blit(self.play, (10, 50))
+        self.pause = self.font.render(
+            f"Press P to pause", True, (255, 255, 255))
+        self.screen.blit(self.pause, (10, 90))
         system_rendering(self.ecs_world, self.screen)
         pygame.display.flip()
 
