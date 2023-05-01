@@ -1,3 +1,4 @@
+import asyncio
 import json
 import pygame
 import esper
@@ -63,7 +64,7 @@ class GameEngine:
         with open("assets/cfg/explosion.json") as explosion_file:
             self.explosion_cfg = json.load(explosion_file)
 
-    def run(self) -> None:
+    async def run(self) -> None:
         self._create()
         self.is_running = True
         while self.is_running:
@@ -71,13 +72,18 @@ class GameEngine:
             self._process_events()
             self._update()
             self._draw()
+            await asyncio.sleep(0)
         self._clean()
 
     def _create(self):
-        self._player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg["player_spawn"])
-        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
-        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
-        self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
+        self._player_entity = create_player_square(
+            self.ecs_world, self.player_cfg, self.level_01_cfg["player_spawn"])
+        self._player_c_v = self.ecs_world.component_for_entity(
+            self._player_entity, CVelocity)
+        self._player_c_t = self.ecs_world.component_for_entity(
+            self._player_entity, CTransform)
+        self._player_c_s = self.ecs_world.component_for_entity(
+            self._player_entity, CSurface)
 
         create_enemy_spawner(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
@@ -107,7 +113,8 @@ class GameEngine:
         system_explosion_kill(self.ecs_world)
 
         system_player_state(self.ecs_world)
-        system_enemy_hunter_state(self.ecs_world, self._player_entity, self.enemies_cfg["TypeHunter"])
+        system_enemy_hunter_state(
+            self.ecs_world, self._player_entity, self.enemies_cfg["TypeHunter"])
 
         system_animation(self.ecs_world, self.delta_time)
 
